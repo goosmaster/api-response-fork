@@ -37,6 +37,8 @@ abstract class AbstractResponse implements Response
 
     const CODE_UNWILLING_TO_PROCESS = 'GEN-UNWILLING-TO-PROCESS';
 
+    const CODE_SUCCESSFUL_DELETED = 'GEN-SUCCESSFUL-DELETED';
+
     /**
      * HTTP Status code
      *
@@ -90,15 +92,6 @@ abstract class AbstractResponse implements Response
     }
 
     /**
-     * Implement this !!!
-     * This method return the final response output
-     *
-     * @param array $array
-     * @param array $headers
-     */
-    abstract public function withArray(array $array, array $headers = array());
-
-    /**
      * Response for one item
      *
      * @param $data
@@ -119,6 +112,15 @@ abstract class AbstractResponse implements Response
 
         return $this->withArray($rootScope->toArray());
     }
+
+    /**
+     * Implement this !!!
+     * This method return the final response output
+     *
+     * @param array $array
+     * @param array $headers
+     */
+    abstract public function withArray(array $array, array $headers = array());
 
     /**
      * Response for collection of items
@@ -148,6 +150,17 @@ abstract class AbstractResponse implements Response
     }
 
     /**
+     * Generates a response with a 403 HTTP header and a given message.
+     *
+     * @param string $message
+     * @return mixed
+     */
+    public function errorForbidden($message = 'Forbidden')
+    {
+        return $this->setStatusCode(403)->withError($message, self::CODE_FORBIDDEN);
+    }
+
+    /**
      * Response for errors
      *
      * @param string $message
@@ -163,17 +176,6 @@ abstract class AbstractResponse implements Response
                 'message' => $message
             ]
         ]);
-    }
-
-    /**
-     * Generates a response with a 403 HTTP header and a given message.
-     *
-     * @param string $message
-     * @return mixed
-     */
-    public function errorForbidden($message = 'Forbidden')
-    {
-        return $this->setStatusCode(403)->withError($message, self::CODE_FORBIDDEN);
     }
 
     /**
@@ -251,5 +253,21 @@ abstract class AbstractResponse implements Response
     public function errorUnwillingToProcess($message = 'Server is unwilling to process the request')
     {
         return $this->setStatusCode(431)->withError($message, self::CODE_UNWILLING_TO_PROCESS);
+    }
+
+    public function withSuccessfulDeleted($message = null)
+    {
+        if (!empty($message)) {
+            return $this->setStatusCode(200)->withArray([
+                'data' => [
+                    'code'      => self::CODE_SUCCESSFUL_DELETED,
+                    'http_code' => 200,
+                    'message'   => $message
+                ]
+            ]);
+        }
+
+        return $this->setStatusCode(204)
+            ->withArray([]);
     }
 }
