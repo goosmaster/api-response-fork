@@ -82,7 +82,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorForbidden($message);
+    public function errorForbidden($message = 'Forbidden');
 
     /**
      * Generates a response with a 500 HTTP header and a given message.
@@ -90,7 +90,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorInternalError($message);
+    public function errorInternalError($message = 'Internal Error');
 
     /**
      * Generates a response with a 404 HTTP header and a given message.
@@ -98,7 +98,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorNotFound($message);
+    public function errorNotFound($message = 'Resource Not Found');
 
     /**
      * Generates a response with a 401 HTTP header and a given message.
@@ -106,7 +106,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorUnauthorized($message);
+    public function errorUnauthorized($message = 'Unauthorized');
 
     /**
      * Generates a response with a 400 HTTP header and a given message.
@@ -114,7 +114,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorWrongArgs($message);
+    public function errorWrongArgs($message = 'Wrong Arguments');
 
     /**
      * Generates a response with a 410 HTTP header and a given message.
@@ -122,7 +122,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorGone($message);
+    public function errorGone($message = 'Resource No Longer Available');
 
     /**
      * Generates a response with a 405 HTTP header and a given message.
@@ -130,7 +130,7 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorMethodNotAllowed($message);
+    public function errorMethodNotAllowed($message = 'Method Not Allowed');
 
     /**
      * Generates a Response with a 431 HTTP header and a given message.
@@ -138,5 +138,5 @@ interface Response
      * @param string $message
      * @return mixed
      */
-    public function errorUnwillingToProcess($message);
+    public function errorUnwillingToProcess($message = 'Server is unwilling to process the request');
 }
