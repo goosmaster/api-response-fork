@@ -141,4 +141,6 @@ interface Response
     public function errorUnwillingToProcess($message = 'Server is unwilling to process the request');
 
     public function withSuccessfulDeleted($message = null);
+
+    public function errorUnprocessableEntity($message = 'Unprocessable Entity', $messages = []);
 }

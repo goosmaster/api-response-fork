@@ -18,8 +18,7 @@ use League\Fractal\Pagination\Cursor;
  * @author Maxime Beaudoin <maxime.beaudoin@ellipse-synergie.com>
  * @author Phil Sturgeon <email@philsturgeon.co.uk>
  */
-abstract class AbstractResponse implements Response
-{
+abstract class AbstractResponse implements Response {
 
     const CODE_WRONG_ARGS = 'GEN-WRONG-ARGS';
 
@@ -38,6 +37,8 @@ abstract class AbstractResponse implements Response
     const CODE_UNWILLING_TO_PROCESS = 'GEN-UNWILLING-TO-PROCESS';
 
     const CODE_SUCCESSFUL_DELETED = 'GEN-SUCCESSFUL-DELETED';
+
+    const CODE_UNPROCESSABLE_ENTITY = 'GEN-UNPROCESSABLE-ENTITY';
 
     /**
      * HTTP Status code
@@ -83,21 +84,24 @@ abstract class AbstractResponse implements Response
      * Setter for status code
      *
      * @param int $statusCode
+     *
      * @return \EllipseSynergie\ApiResponse\AbstractResponse
      */
     public function setStatusCode($statusCode)
     {
         $this->statusCode = $statusCode;
+
         return $this;
     }
 
     /**
      * Response for one item
      *
-     * @param $data
+     * @param                                              $data
      * @param callable|\League\Fractal\TransformerAbstract $transformer
-     * @param string $resourceKey
-     * @param array $meta
+     * @param string                                       $resourceKey
+     * @param array                                        $meta
+     *
      * @return mixed
      */
     public function withItem($data, $transformer, $resourceKey = null, $meta = [])
@@ -125,11 +129,12 @@ abstract class AbstractResponse implements Response
     /**
      * Response for collection of items
      *
-     * @param $data
+     * @param                                              $data
      * @param callable|\League\Fractal\TransformerAbstract $transformer
-     * @param string $resourceKey
-     * @param Cursor $cursor
-     * @param array $meta
+     * @param string                                       $resourceKey
+     * @param Cursor                                       $cursor
+     * @param array                                        $meta
+     *
      * @return mixed
      */
     public function withCollection($data, $transformer, $resourceKey = null, Cursor $cursor = null, $meta = [])
@@ -153,6 +158,7 @@ abstract class AbstractResponse implements Response
      * Generates a response with a 403 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorForbidden($message = 'Forbidden')
@@ -165,23 +171,33 @@ abstract class AbstractResponse implements Response
      *
      * @param string $message
      * @param string $errorCode
+     *
+     * @param array  $messages
+     *
      * @return mixed
      */
-    public function withError($message, $errorCode)
+    public function withError($message, $errorCode, $messages = [])
     {
-        return $this->withArray([
+        $error = [
             'error' => [
-                'code' => $errorCode,
+                'code'    => $errorCode,
                 'http_code' => $this->statusCode,
                 'message' => $message
             ]
-        ]);
+        ];
+
+        if (count($messages)) {
+            $error['error']['messages'] = $messages;
+        }
+
+        return $this->withArray($error);
     }
 
     /**
      * Generates a response with a 500 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorInternalError($message = 'Internal Error')
@@ -193,6 +209,7 @@ abstract class AbstractResponse implements Response
      * Generates a response with a 404 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorNotFound($message = 'Resource Not Found')
@@ -204,6 +221,7 @@ abstract class AbstractResponse implements Response
      * Generates a response with a 401 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorUnauthorized($message = 'Unauthorized')
@@ -215,6 +233,7 @@ abstract class AbstractResponse implements Response
      * Generates a response with a 400 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorWrongArgs($message = 'Wrong Arguments')
@@ -226,6 +245,7 @@ abstract class AbstractResponse implements Response
      * Generates a response with a 410 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorGone($message = 'Resource No Longer Available')
@@ -237,6 +257,7 @@ abstract class AbstractResponse implements Response
      * Generates a response with a 405 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorMethodNotAllowed($message = 'Method Not Allowed')
@@ -248,6 +269,7 @@ abstract class AbstractResponse implements Response
      * Generates a Response with a 431 HTTP header and a given message.
      *
      * @param string $message
+     *
      * @return mixed
      */
     public function errorUnwillingToProcess($message = 'Server is unwilling to process the request')
@@ -269,5 +291,10 @@ abstract class AbstractResponse implements Response
 
         return $this->setStatusCode(204)
             ->withArray([]);
+    }
+
+    public function errorUnprocessableEntity($message = 'Unprocessable Entity', $messages = [])
+    {
+        return $this->setStatusCode(422)->withError($message, self::CODE_UNPROCESSABLE_ENTITY, $messages);
     }
 }
