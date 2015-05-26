@@ -36,7 +36,7 @@ abstract class AbstractResponse implements Response {
 
     const CODE_UNWILLING_TO_PROCESS = 'GEN-UNWILLING-TO-PROCESS';
 
-    const CODE_SUCCESSFUL_DELETED = 'GEN-SUCCESSFUL-DELETED';
+    const CODE_SUCCESSFUL = 'GEN-SUCCESSFUL';
 
     const CODE_UNPROCESSABLE_ENTITY = 'GEN-UNPROCESSABLE-ENTITY';
 
@@ -277,12 +277,12 @@ abstract class AbstractResponse implements Response {
         return $this->setStatusCode(431)->withError($message, self::CODE_UNWILLING_TO_PROCESS);
     }
 
-    public function withSuccessfulDeleted($message = null)
+    public function withSuccessful($message = null)
     {
         if (!empty($message)) {
             return $this->setStatusCode(200)->withArray([
                 'data' => [
-                    'code'      => self::CODE_SUCCESSFUL_DELETED,
+                    'code' => self::CODE_SUCCESSFUL,
                     'http_code' => 200,
                     'message'   => $message
                 ]
